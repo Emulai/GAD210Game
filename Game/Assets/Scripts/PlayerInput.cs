@@ -25,7 +25,7 @@ public class PlayerInput : MonoBehaviour
         player.VerticalValue = vertical;
 
         if (Input.GetButtonDown("Jump")) {
-            // Debug.Log("Jump");
+            player.Jump();
         }
 
         if (mouseX != 0.0f) {
