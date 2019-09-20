@@ -6,10 +6,10 @@ using UnityEngine;
 public class PlayerInput : MonoBehaviour
 {
 
-    private PlayerController player = null;
+    private PlayerController _player = null;
 
     void Start() {
-        player = GetComponent<PlayerController>();
+        _player = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -20,20 +20,20 @@ public class PlayerInput : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        player.HorizontalValue = horizontal;
+        _player.HorizontalValue = horizontal;
 
-        player.VerticalValue = vertical;
+        _player.VerticalValue = vertical;
 
         if (Input.GetButtonDown("Jump")) {
-            player.Jump();
+            _player.Jump();
         }
 
         if (mouseX != 0.0f) {
-            player.RotateY = mouseX;
+            _player.RotateY = mouseX;
         }
 
         if (mouseY != 0.0f) {
-            player.RotateX = mouseY;
+            _player.RotateX = mouseY;
         }
     }
 }

@@ -5,24 +5,29 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody rb = null;
-    private float horizontalAxisValue = 0.0f;
-    private float verticalAxisValue = 0.0f;
     [SerializeField]
-    private float speed = 5.0f;
+    private float _speed = 5.0f;
     [SerializeField]
-    private float jumpForce = 250.0f;
-    private float xRotate = 0.0f;
-    private float yRotate = 0.0f;
-    private bool isGrounded = false;
-    public bool onRamp = false;
+    private float _jumpForce = 250.0f;
     [SerializeField]
-    public LayerMask mask = (1 << 8) | (1 << 9);
+    private LayerMask _mask = (1 << 8) | (1 << 9);
+
+    [Header("Debug Variables")]
+    [SerializeField]
+    private bool _displayMoveVector = false;
+
+    private Rigidbody _rb = null;
+    private float _horizontalAxisValue = 0.0f;
+    private float _verticalAxisValue = 0.0f;
+    private float _xRotate = 0.0f;
+    private float _yRotate = 0.0f;
+    private bool _isGrounded = false;
+    private bool _onRamp = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody>();
 
         // Move to game controller
         Cursor.visible = false;
@@ -46,20 +51,7 @@ public class PlayerController : MonoBehaviour
             -transform.up, 
             out hit,
             1.1f, 
-            mask);
-
-        Debug.DrawLine(
-            new Vector3(
-                transform.position.x, 
-                transform.position.y, 
-                transform.position.z),
-            new Vector3(
-                transform.position.x, 
-                transform.position.y - 1.1f, 
-                transform.position.z
-            ),
-            Color.red
-        );
+            _mask);
 
         if (hit.collider != null) {
             int layer = hit.collider.gameObject.layer;
@@ -67,76 +59,66 @@ public class PlayerController : MonoBehaviour
             if (layer == 8 ||
                 layer == 9) 
             {
-                isGrounded = true;
+                _isGrounded = true;
                 if (hit.collider.tag == "Ramp") {
-                    onRamp = true;
+                    _onRamp = true;
                 }
                 else {
-                    onRamp = false;
+                    _onRamp = false;
                 }
             }
         }
         else {
-            isGrounded = false;
-            onRamp = false;
+            _isGrounded = false;
+            _onRamp = false;
         }
 
-        // And not grounded
-        if (verticalAxisValue == 0.0f 
-            && horizontalAxisValue == 0.0f
-            && isGrounded) 
-        {
-            rb.drag = 10.0f;
-        }
-        else {
-            rb.drag = 0.0f;
-        }
+        Vector3 fForward = transform.forward * _verticalAxisValue;
+        Vector3 fRight = transform.right * _horizontalAxisValue;
 
-        Vector3 fForward = transform.forward * verticalAxisValue;
-        Vector3 fRight = transform.right * horizontalAxisValue;
-
-        if (onRamp && (verticalAxisValue != 0.0f || horizontalAxisValue != 0.0f)) {
+        if (_onRamp && (_verticalAxisValue != 0.0f || _horizontalAxisValue != 0.0f)) {
             Vector3 rampFactor = new Vector3(0, 2, 0);
             fForward += rampFactor;
             fRight += rampFactor;
         }
 
         Vector3 fDirectional = fForward + fRight;
-        Debug.DrawRay(transform.position, fDirectional, Color.blue);
+        if (_displayMoveVector) {
+            Debug.DrawRay(transform.position, fDirectional, Color.blue);
+        }
 
-        // rb.AddForce(fForward);
-        // rb.AddForce(fRight);
-        rb.AddForce(fDirectional);
+        fDirectional.y = _rb.velocity.y;
+        _rb.velocity = fDirectional;
 
-        transform.rotation = Quaternion.Euler(0, yRotate, 0);
-        Camera.main.transform.rotation = Quaternion.Euler(xRotate, yRotate, 0);
+        transform.rotation = Quaternion.Euler(0, _yRotate, 0);
+        Camera.main.transform.rotation = Quaternion.Euler(_xRotate, _yRotate, 0);
 
     }
 
     public void Jump() {
-        if (isGrounded) {
-            rb.drag = 0.0f;
-            rb.AddForce(transform.up * jumpForce);
+        if (_isGrounded) {
+            _rb.drag = 0.0f;
+            _rb.AddForce(transform.up * _jumpForce);
         }
     }
 
     public float HorizontalValue {
-        set { horizontalAxisValue = value * speed; }
+        set { _horizontalAxisValue = value * _speed; }
     }
 
     public float VerticalValue {
-        set { verticalAxisValue = value * speed; }
+        set { _verticalAxisValue = value * _speed; }
     }
 
     public float RotateX {
         set { 
-                float x = xRotate;
+                float x = _xRotate;
                 x += -value * 5.0f;
-                xRotate = Mathf.Clamp(x, -89.0f, 89.0f);
+                _xRotate = Mathf.Clamp(x, -89.0f, 89.0f);
         }
     }
 
     public float RotateY {
-        set { yRotate += value * 5.0f; }
+        set { _yRotate += value * 5.0f; }
     }
 }
