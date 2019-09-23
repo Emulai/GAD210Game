@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate() 
     {
+        Vector3 fDirectional = new Vector3();
 
         RaycastHit hit;
         Physics.Raycast(
@@ -67,11 +68,12 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.collider.tag == "Platform")
                 {
-                    Debug.Log("Platform");
+                    transform.SetParent(hit.collider.transform);
                 }
                 else 
                 {
                     _onRamp = false;
+                    transform.SetParent(null);
                 }
             }
         }
@@ -79,6 +81,7 @@ public class PlayerController : MonoBehaviour
         {
             _isGrounded = false;
             _onRamp = false;
+            transform.SetParent(null);
         }
 
         Vector3 fForward = transform.forward * _verticalAxisValue;
@@ -91,7 +94,7 @@ public class PlayerController : MonoBehaviour
             fRight += rampFactor;
         }
 
-        Vector3 fDirectional = fForward + fRight;
+        fDirectional += fForward + fRight;
         if (_displayMoveVector) 
         {
             Debug.DrawRay(transform.position, fDirectional, Color.blue);
