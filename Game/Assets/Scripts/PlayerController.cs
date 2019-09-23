@@ -40,7 +40,8 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    void FixedUpdate() {
+    void FixedUpdate() 
+    {
 
         RaycastHit hit;
         Physics.Raycast(
@@ -53,22 +54,29 @@ public class PlayerController : MonoBehaviour
             1.1f, 
             _mask);
 
-        if (hit.collider != null) {
+        if (hit.collider != null) 
+        {
             int layer = hit.collider.gameObject.layer;
-            Debug.Log(layer);
             if (layer == 8 ||
                 layer == 9) 
             {
                 _isGrounded = true;
-                if (hit.collider.tag == "Ramp") {
+                if (hit.collider.tag == "Ramp") 
+                {
                     _onRamp = true;
                 }
-                else {
+                else if (hit.collider.tag == "Platform")
+                {
+                    Debug.Log("Platform");
+                }
+                else 
+                {
                     _onRamp = false;
                 }
             }
         }
-        else {
+        else 
+        {
             _isGrounded = false;
             _onRamp = false;
         }
@@ -76,14 +84,16 @@ public class PlayerController : MonoBehaviour
         Vector3 fForward = transform.forward * _verticalAxisValue;
         Vector3 fRight = transform.right * _horizontalAxisValue;
 
-        if (_onRamp && (_verticalAxisValue != 0.0f || _horizontalAxisValue != 0.0f)) {
+        if (_onRamp && (_verticalAxisValue != 0.0f || _horizontalAxisValue != 0.0f)) 
+        {
             Vector3 rampFactor = new Vector3(0, 2, 0);
             fForward += rampFactor;
             fRight += rampFactor;
         }
 
         Vector3 fDirectional = fForward + fRight;
-        if (_displayMoveVector) {
+        if (_displayMoveVector) 
+        {
             Debug.DrawRay(transform.position, fDirectional, Color.blue);
         }
 
@@ -95,30 +105,37 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void Jump() {
-        if (_isGrounded) {
+    public void Jump() 
+    {
+        if (_isGrounded) 
+        {
             _rb.drag = 0.0f;
             _rb.AddForce(transform.up * _jumpForce);
         }
     }
 
-    public float HorizontalValue {
+    public float HorizontalValue 
+    {
         set { _horizontalAxisValue = value * _speed; }
     }
 
-    public float VerticalValue {
+    public float VerticalValue 
+    {
         set { _verticalAxisValue = value * _speed; }
     }
 
-    public float RotateX {
-        set { 
-                float x = _xRotate;
-                x += -value * 5.0f;
-                _xRotate = Mathf.Clamp(x, -89.0f, 89.0f);
+    public float RotateX 
+    {
+        set 
+        { 
+            float x = _xRotate;
+            x += -value * 5.0f;
+            _xRotate = Mathf.Clamp(x, -89.0f, 89.0f);
         }
     }
 
-    public float RotateY {
+    public float RotateY 
+    {
         set { _yRotate += value * 5.0f; }
     }
 }
