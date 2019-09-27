@@ -30,7 +30,8 @@ public class Platform : MonoBehaviour
     void Update()
     {   
 
-        if (curved) {
+        if (curved)
+        {
             t += (Time.deltaTime / 100.0f) * 15.0f;
         }
 
@@ -40,17 +41,20 @@ public class Platform : MonoBehaviour
             GetNewWaypoint();
         }
 
-        if (curved) {
+        if (curved)
+        {
             platform.transform.position = Vector3.Slerp(startPosition, path.transform.TransformPoint(pos[pathIndex]), t);
         }
-        else {
+        else
+        {
             // Move the platform towards the current path waypoint
             platform.transform.position = Vector3.MoveTowards(platform.transform.position, path.transform.TransformPoint(pos[pathIndex]), Time.deltaTime * speed);
         }
     }
 
     private void GetNewWaypoint() {
-        if (curved) {
+        if (curved)
+        {
             startPosition = path.transform.TransformPoint(pos[pathIndex]);
             t = 0.0f;
         }

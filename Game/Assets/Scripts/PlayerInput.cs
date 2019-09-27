@@ -5,11 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerInput : MonoBehaviour
 {
-
-    private PlayerController _player = null;
+    [SerializeField]
+    private TeleGun gun = null;
+    private PlayerController player = null;
 
     void Start() {
-        _player = GetComponent<PlayerController>();
+        player = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -20,20 +21,37 @@ public class PlayerInput : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        _player.HorizontalValue = horizontal;
+        player.HorizontalValue = horizontal;
 
-        _player.VerticalValue = vertical;
+        player.VerticalValue = vertical;
 
-        if (Input.GetButtonDown("Jump")) {
-            _player.Jump();
+        if (Input.GetButtonDown("Jump"))
+        {
+            player.Jump();
         }
 
-        if (mouseX != 0.0f) {
-            _player.RotateY = mouseX;
+        if (mouseX != 0.0f)
+        {
+            player.RotateY = mouseX;
         }
 
-        if (mouseY != 0.0f) {
-            _player.RotateX = mouseY;
+        if (mouseY != 0.0f)
+        {
+            player.RotateX = mouseY;
+        }
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            gun.Shoot();
+        }
+
+        if (Input.GetButtonDown("Fire2"))
+        {
+            Vector3 targetPosition = new Vector3();
+            if (gun.GetTeleportTarget(out targetPosition))
+            {
+                player.Teleport(targetPosition);
+            }
         }
     }
 }
