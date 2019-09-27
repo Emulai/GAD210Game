@@ -10,31 +10,51 @@ public class Platform : MonoBehaviour
     private LineRenderer path = null;
     [SerializeField]
     private float speed = 2.0f;
+    [SerializeField]
+    private bool curved = false;
 
     private Vector3[] pos = null;
-    private int pathIndex = 1;
+    public int pathIndex = 1;
     private bool goingUp = true;
+    public Vector3 startPosition;
+    private float t = 0.0f;
 
     void Start()
     {
         // Get all positions in path
         pos = new Vector3[path.positionCount];
         path.GetPositions(pos);
+        startPosition = path.transform.TransformPoint(pos[0]);
     }
 
     void Update()
     {   
+
+        if (curved) {
+            t += (Time.deltaTime / 100.0f) * 15.0f;
+        }
+
         // If the platform is at the same location as the current path waypoint, get a new waypoint
-        if (platform.transform.position == path.transform.TransformPoint(pos[pathIndex]))
+        if (platform.transform.position == path.transform.TransformPoint(pos[pathIndex]) || t > 1.0f)
         {
             GetNewWaypoint();
         }
 
-        // Move the platform towards the current path waypoint
-        platform.transform.position = Vector3.MoveTowards(platform.transform.position, path.transform.TransformPoint(pos[pathIndex]), Time.deltaTime * speed);
+        if (curved) {
+            platform.transform.position = Vector3.Slerp(startPosition, path.transform.TransformPoint(pos[pathIndex]), t);
+        }
+        else {
+            // Move the platform towards the current path waypoint
+            platform.transform.position = Vector3.MoveTowards(platform.transform.position, path.transform.TransformPoint(pos[pathIndex]), Time.deltaTime * speed);
+        }
     }
 
     private void GetNewWaypoint() {
+        if (curved) {
+            startPosition = path.transform.TransformPoint(pos[pathIndex]);
+            t = 0.0f;
+        }
+
         // If the path is a loop, just increment waypoint index unless at end. If at last index, set to beginning
         if (path.loop) 
         {
