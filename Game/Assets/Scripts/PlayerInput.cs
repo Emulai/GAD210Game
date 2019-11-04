@@ -53,5 +53,9 @@ public class PlayerInput : MonoBehaviour
                 player.Teleport(targetPosition);
             }
         }
+
+        if (Input.GetButtonDown("Activate")) {
+            player.Activate();
+        }
     }
 }

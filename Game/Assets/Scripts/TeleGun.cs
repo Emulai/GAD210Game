@@ -15,6 +15,7 @@ public class TeleGun : MonoBehaviour
     void Start()
     {
         projectileStartScale = projectile.transform.localScale;
+        ReturnProjectile();
     }
 
     public void Shoot()
@@ -22,7 +23,9 @@ public class TeleGun : MonoBehaviour
         if (hasProjectile) 
         {
             Rigidbody rb = projectile.gameObject.AddComponent<Rigidbody>();
-            rb.AddForce(projectile.transform.forward * 500.0f);
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            rb.angularDrag = 0.0f;
+            rb.AddForce(projectile.transform.forward * 1000.0f);
             projectile.SetParent(null);
 
             hasProjectile = false;
@@ -53,7 +56,7 @@ public class TeleGun : MonoBehaviour
 
         projectile.transform.position = projectileSpawn.transform.position;
         projectile.transform.rotation = projectileSpawn.transform.rotation;
-        // projectile.transform.localScale = projectileStartScale;
+        projectile.transform.localScale = projectileStartScale;
         projectile.SetParent(gameObject.transform);
 
         hasProjectile = true;

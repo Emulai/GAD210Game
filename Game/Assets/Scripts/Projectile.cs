@@ -6,6 +6,11 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField]
     private LayerMask mask = (1 << 8);
+    private Vector3 originalScale;
+
+    void Start() {
+        originalScale = transform.lossyScale;
+    }
 
     void FixedUpdate()
     {
@@ -36,13 +41,19 @@ public class Projectile : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         
-        if (other.collider.tag == "Platform")
-        {
-            Rigidbody rb = GetComponent<Rigidbody>();
-            Destroy(rb);
+        // if (other.collider.tag == "Platform")
+        // {
+        //     Rigidbody rb = GetComponent<Rigidbody>();
+        //     // Destroy(rb);
 
-            transform.SetParent(other.collider.transform.parent);
-        }
+        //     Debug.Log(transform.localScale);
+            
+        //     Debug.Log(originalScale);
+        //     transform.SetParent(other.collider.transform);
+        //     Debug.Log(transform.localScale);
+        //     transform.localScale = originalScale;
+        //     Debug.Log(transform.localScale);
+        // }
         
     }
 }
