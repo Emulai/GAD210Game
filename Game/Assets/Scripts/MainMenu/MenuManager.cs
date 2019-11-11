@@ -10,23 +10,24 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField]
     private Canvas mainMenu = null;
+    [Header("Load Menu")]
     [SerializeField]
     private Canvas loadMenu = null;
-
+    [SerializeField]
     private ScrollRect loadList = null;
+    [SerializeField]
     private RawImage loadImage = null;
-    private TMP_Text loadText = null;
+    [SerializeField]
+    private TMP_Text loadDetails = null;
+    [SerializeField]
+    private Button fileButton = null;
+
+    private DirectoryInfo info = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        loadList = loadMenu.GetComponentInChildren<ScrollRect>();
-        loadImage = loadMenu.GetComponentInChildren<RawImage>();
-        loadText = loadMenu.GetComponentInChildren<TMP_Text>();
-
-        loadList.gameObject.SetActive(false);
-        loadImage.gameObject.SetActive(false);
-        loadText.gameObject.SetActive(false);
+        info = new DirectoryInfo(Application.persistentDataPath + "/SavedGames");
     }
 
     // Update is called once per frame
@@ -36,15 +37,30 @@ public class MenuManager : MonoBehaviour
     }
 
     public void NewGame() {
-        Debug.Log("Start New Game");
+        SceneManager.LoadSceneAsync("Scenes/FirstLevel");
     }
 
     public void LoadGame() {
-        DirectoryInfo info = new DirectoryInfo(Application.persistentDataPath + "/SavedGames");
-        FileInfo[] fileInfo = info.GetFiles();
+        mainMenu.gameObject.SetActive(false);
+        loadMenu.gameObject.SetActive(true);
+
+        FileInfo[] fileInfo = info.GetFiles("*.stdm");
         foreach (FileInfo file in fileInfo) {
+            Button button = Instantiate(fileButton, loadList.content);
+            button.GetComponentInChildren<TMP_Text>().text =  file.Name.Split('.')[0];
+
             Debug.Log(file.Name + " : " + file.CreationTime + " : " + file.LastWriteTime);
         }
+    }
+
+    public void BackToMain() {
+        loadMenu.gameObject.SetActive(false);
+        mainMenu.gameObject.SetActive(true);
+    }
+
+    public void RandomMode() {
+        // Start Tech-Art project
+        Debug.Log("RandomMode");
     }
 
     public void Sandbox() {
