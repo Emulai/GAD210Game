@@ -4,12 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class StandButton : MonoBehaviour, IInteractive
+public class StandButton : Switch, IInteractive
 {
     [SerializeField]
     float openTime = 0.0f;
-    [SerializeField]
-    private GameObject door = null;
     [SerializeField]
     private GameObject timerScreen = null;
     [SerializeField]
@@ -17,19 +15,12 @@ public class StandButton : MonoBehaviour, IInteractive
     [SerializeField]
     private Color doorClosed = Color.red;
 
-    [Header("Debug")]
-    [SerializeField]
-    private bool debug = false;
-
-    private Animator anim = null;
     private float timer = 0.0f;
-    private bool open = false;
     private TMP_Text timerText = null;
     private Image timerPanel = null;
     private Coroutine coroutine = null;
 
     void Start() {
-        anim = door.GetComponent<Animator>();
         Canvas c = timerScreen.GetComponentInChildren<Canvas>();
         timerText = c.GetComponentInChildren<TMP_Text>();
         timerPanel = c.GetComponentInChildren<Image>();
@@ -37,7 +28,7 @@ public class StandButton : MonoBehaviour, IInteractive
 
     // Handles countdown timer until door is closed 
     void Update() {
-        if (open) {
+        if (isActive) {
             if (coroutine != null) {
                 StopCoroutine(coroutine);
             }
@@ -46,8 +37,7 @@ public class StandButton : MonoBehaviour, IInteractive
             timerPanel.color = Color.Lerp(doorClosed, doorOpen, (timer / openTime));
 
             if (timer <= 0.0f) {
-                anim.SetTrigger("Close");
-                open = false;
+                isActive = false;
                 timer = 0.0f;
                 timerPanel.color = doorClosed;
                 coroutine = StartCoroutine(ChangeColour());
@@ -56,17 +46,11 @@ public class StandButton : MonoBehaviour, IInteractive
             timerText.text = (timer * 100.0f).ToString("0:00");
 
         }
-
-        if (debug) {
-            Debug.DrawLine(transform.position, door.gameObject.transform.position, Color.green);
-            Debug.DrawLine(transform.position, timerScreen.gameObject.transform.position, Color.green);
-        }
     }
 
     public void Activate(PlayerController activator) {
-        anim.SetTrigger("Open");
+        isActive = true;
         timer = openTime;
-        open = true;
         timerPanel.color = doorOpen;
     }
 
@@ -79,5 +63,10 @@ public class StandButton : MonoBehaviour, IInteractive
 
         timerText.text = "";
         timerPanel.color = Color.black;
+    }
+
+    public float Timer {
+        get { return timer; }
+        set { timer = value; }
     }
 }

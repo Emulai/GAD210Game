@@ -407,8 +407,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3631563919842285844}
   - component: {fileID: 3631563919842285847}
+  - component: {fileID: 3115817531753366964}
   m_Layer: 0
-  m_Name: Door 1
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -423,7 +424,7 @@ Transform:
   m_GameObject: {fileID: 3631563919842285845}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 7.8, y: 1.47, z: -11.62}
-  m_LocalScale: {x: 1, y: 1.5, z: 2}
+  m_LocalScale: {x: 1, y: 1.5, z: 6}
   m_Children:
   - {fileID: 3631563918641293025}
   - {fileID: 3631563919749561564}
@@ -449,3 +450,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &3115817531753366964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3631563919842285845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c177ecd31a3ae38479747b7fb4916bb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  switches: []
+  debug: 0

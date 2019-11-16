@@ -1,31 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class BoxButton : MonoBehaviour
+public class BoxButton : Switch
 {
     [SerializeField]
-    private GameObject door = null;
-
-    [Header("Debug")]
+    private GameObject indicator = null;
     [SerializeField]
-    private bool debug = false;
-    private Animator anim = null;
+    private Color doorOpen = Color.green;
+    [SerializeField]
+    private Color doorClosed = Color.red;
+
+    private TMP_Text indicatorText = null;
+    private Image indicatorPanel = null;
 
     void Start() {
-        anim = door.GetComponent<Animator>();
-    }
-
-    void Update() {
-        if (debug) {
-            Debug.DrawLine(transform.position, door.gameObject.transform.position, Color.green);
-        }
+        Canvas c = indicator.GetComponentInChildren<Canvas>();
+        indicatorText = c.GetComponentInChildren<TMP_Text>();
+        indicatorPanel = c.GetComponentInChildren<Image>();
     }
 
     void OnTriggerEnter(Collider other) {
         if (other.tag == "TriggerBox") {
             
-            anim.SetTrigger("Open");
+            isActive = true;
+            indicatorText.text = "O";
+            indicatorPanel.color = doorOpen;
 
         }
     }
@@ -33,7 +35,9 @@ public class BoxButton : MonoBehaviour
     void OnTriggerExit(Collider other) {
         if (other.tag == "TriggerBox") {
             
-            anim.SetTrigger("Close");
+            isActive = false;
+            indicatorText.text = "X";
+            indicatorPanel.color = doorClosed;
 
         }
     }

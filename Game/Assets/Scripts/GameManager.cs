@@ -1,49 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
-    private Canvas pauseMenu = null;
-    
-    private bool isPaused = false;
+    public string tester;
+    private static GameManager instance;   
+    private SaveFormat fileToLoad;
+    private Coroutine co;
 
-    // Start is called before the first frame update
+    void Awake() {
+        if (instance == null) {
+            instance = this;
+        }
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     void Start()
     {
-        isPaused = false;
         Time.timeScale = 1.0f;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetButtonDown("Pause")) {
-            if (!isPaused) {
-                Time.timeScale = 0.0f;
-                pauseMenu.gameObject.SetActive(true);
+    public void LoadGameLevel(SaveFormat file) {
+        fileToLoad = file;
 
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
+        StartCoroutine(LoadGameLevelCoroutine());
+    }
 
-                isPaused = true;
-            }
-            else {
-                Time.timeScale = 1.0f;
-                pauseMenu.gameObject.SetActive(false);
+    private IEnumerator LoadGameLevelCoroutine() {
+        AsyncOperation sceneLoad = SceneManager.LoadSceneAsync("Scenes/" + fileToLoad.sceneName);
 
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+        while (!sceneLoad.isDone) {
+            yield return null;
+        }
 
-                isPaused = false;
-            }
+        PlayerInput input = FindObjectOfType<PlayerInput>();
+        input.HasGun = fileToLoad.playerHasGun;
+        input.gameObject.GetComponent<Rigidbody>().MovePosition(fileToLoad.playerPosition);
+        input.transform.rotation = fileToLoad.playerRotation;
+
+        TriggerBox[] boxes = FindObjectsOfType<TriggerBox>();
+        for (int index = 0; index < fileToLoad.boxPositions.Count; index++) {
+            boxes[index].transform.position = fileToLoad.boxPositions[index];
+            boxes[index].transform.rotation = fileToLoad.boxRotations[index];
+        }
+
+        StandButton[] standButtons = FindObjectsOfType<StandButton>();
+        for (int index = 0; index < fileToLoad.standTimers.Count; index++) {
+            standButtons[index].Timer = fileToLoad.standTimers[index];
+            standButtons[index].IsActive = fileToLoad.standActives[index];
+        }
+
+        Platform[] platforms = FindObjectsOfType<Platform>();
+        for (int index = 0; index < fileToLoad.platformPositions.Count; index++) {
+            platforms[index].transform.position = fileToLoad.platformPositions[index];
+            platforms[index].pathIndex = fileToLoad.platformTarget[index];
         }
     }
 
-    public bool IsPaused {
-        get { return isPaused; }
-        set { isPaused = value; }
+    public static GameManager Instance {
+        get { return instance; }
     }
 }

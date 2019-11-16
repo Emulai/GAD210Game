@@ -6,24 +6,26 @@ using UnityEngine;
 public class PlayerInput : MonoBehaviour
 {
     [SerializeField]
-    private GameManager manager = null;
+    private PauseManager manager = null;
     [SerializeField]
     private TeleGun gun = null;
     [SerializeField]
-    private bool hasGun = true;
+    public bool hasGun = true;
     private PlayerController player = null;
+    private bool controllable = true;
 
     void Start() {
         player = GetComponent<PlayerController>();
         if (!hasGun) {
             gun.gameObject.SetActive(false);
         }
+        controllable = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!manager.IsPaused) {
+        if (!manager.IsPaused && controllable) {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
             float mouseX = Input.GetAxis("Mouse X");
@@ -68,5 +70,19 @@ public class PlayerInput : MonoBehaviour
                 player.Activate();
             }
         }
+    }
+
+    public void GetGun() {
+        hasGun = true;
+        gun.gameObject.SetActive(true);
+    }
+
+    public bool IsControllable {
+        set { controllable = value; }
+    }
+
+    public bool HasGun {
+        get { return hasGun; }
+        set { hasGun = value; }
     }
 }

@@ -12,12 +12,15 @@ public class Platform : MonoBehaviour
     private float speed = 2.0f;
     [SerializeField]
     private bool curved = false;
+    [SerializeField]
+    private float waitTime = 1.0f;
 
     private Vector3[] pos = null;
     public int pathIndex = 1;
     private bool goingUp = true;
     public Vector3 startPosition;
     private float t = 0.0f;
+    private float waitTimer = 0.0f;
 
     void Start()
     {
@@ -38,7 +41,18 @@ public class Platform : MonoBehaviour
         // If the platform is at the same location as the current path waypoint, get a new waypoint
         if (platform.transform.position == path.transform.TransformPoint(pos[pathIndex]) || t > 1.0f)
         {
-            GetNewWaypoint();
+            if (pathIndex == 0 || pathIndex == pos.Length - 1 && !curved) {
+                if (waitTimer > 0.0f) {
+                    waitTimer -= Time.deltaTime;
+                }
+                else {
+                    GetNextWaypoint();
+                    waitTimer = waitTime;
+                }
+            }
+            else {
+                GetNextWaypoint();
+            }
         }
 
         if (curved)
@@ -52,7 +66,7 @@ public class Platform : MonoBehaviour
         }
     }
 
-    private void GetNewWaypoint() {
+    private void GetNextWaypoint() {
         if (curved)
         {
             startPosition = path.transform.TransformPoint(pos[pathIndex]);
@@ -99,5 +113,10 @@ public class Platform : MonoBehaviour
                 }
             }
         }
+    }
+
+    public int TargetIndex {
+        get { return pathIndex; }
+        set { pathIndex = value; }
     }
 }
