@@ -341,7 +341,7 @@ public class RoomGenerator : MonoBehaviour
         }
 
         // Determine if this room is the room with the goal - 80% chance it is not
-        if (Random.value > 0.8f && !hasEnd && !canSpawnEnemies) {
+        if (Random.value > 0.8f && !hasEnd && canSpawnEnemies) {
             Vector3 endRoom = roomTrans.position;
             endRoom.y += 10.0f;
             LevelSwitcher ls = Instantiate(levelEnd, endRoom, Quaternion.identity);
