@@ -9,7 +9,10 @@ public class TriggerBox : MonoBehaviour, IInteractive
     private Rigidbody body = null;
     private PlayerController controller = null;
 
+    private Vector3 startPos;
+
     void Start() {
+        startPos = transform.position;
         body = GetComponent<Rigidbody>();
     }
 
@@ -51,5 +54,9 @@ public class TriggerBox : MonoBehaviour, IInteractive
         else {
             return "Pickup box";
         }
+    }
+
+    public void Reset() {
+        transform.position = startPos;
     }
 }

@@ -9,6 +9,7 @@ TagManager:
   - Projectile
   - TriggerBox
   - EnemyBullet
+  - Switch
   layers:
   - Default
   - TransparentFX
@@ -22,8 +23,8 @@ TagManager:
   - Box
   - Interactive
   - Player
-  - 
-  - 
+  - Wall
+  - Switch
   - 
   - 
   - 

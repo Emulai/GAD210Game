@@ -95,6 +95,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void GameEnd() {
+        if (gameRunning) {
+            gameRunning = false;
+            Time.timeScale = 0.0f;
+            Object[] oarr = Resources.FindObjectsOfTypeAll(typeof(PauseMenu));
+            PauseMenu pm = (PauseMenu)oarr[0];
+            pm.gameObject.SetActive(true);
+            pm.GameEndMenu();
+        }
+    }
+
     public static GameManager Instance {
         get { return instance; }
     }

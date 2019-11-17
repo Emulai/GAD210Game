@@ -41,4 +41,8 @@ public class BoxButton : Switch
 
         }
     }
+
+    public GameObject Indicator {
+        set { indicator = value; }
+    }
 }

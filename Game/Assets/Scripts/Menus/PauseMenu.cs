@@ -89,4 +89,14 @@ public class PauseMenu : MonoBehaviour
         resume.gameObject.SetActive(false);
         save.gameObject.SetActive(false);
     }
+
+    public void GameEndMenu() {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        gameOverText.gameObject.SetActive(true);
+        gameOverText.text = "Victory!";
+        resume.gameObject.SetActive(false);
+        save.gameObject.SetActive(false);
+    }
 }

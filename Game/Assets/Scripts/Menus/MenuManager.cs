@@ -12,6 +12,10 @@ public class MenuManager : MonoBehaviour
     [SerializeField]
     private Canvas loadMenu = null;
 
+    [Header("Instructions")]
+    [SerializeField]
+    private Canvas instMenu = null;
+
     private GameManager manager = null;
 
     void Start() {
@@ -30,7 +34,7 @@ public class MenuManager : MonoBehaviour
 
     public void RandomMode() {
         // Start Tech-Art project
-        Debug.Log("RandomMode");
+        SceneManager.LoadSceneAsync("Scenes/Random");
     }
 
     public void Sandbox() {
@@ -38,7 +42,8 @@ public class MenuManager : MonoBehaviour
     }
 
     public void Instructions() {
-        Debug.Log("Load Instructions");
+        gameObject.SetActive(false);
+        instMenu.gameObject.SetActive(true);
     }
 
     public void Quit() {

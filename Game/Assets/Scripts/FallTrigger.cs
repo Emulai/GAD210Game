@@ -16,12 +16,14 @@ public class FallTrigger : MonoBehaviour
         
     }
 
-    void OnCollisionEnter(Collision other) {
+    void OnTriggerEnter(Collider other) {
         if (other.gameObject.tag == "Player") {
             // Kill Player
+            other.gameObject.GetComponent<PlayerController>().DamageHealth(100.0f);
         }
-        else {
+        else if (other.gameObject.tag == "TriggerBox") { 
             // Reset to starting point
+            other.gameObject.GetComponent<TriggerBox>().Reset();
         }
     }
 }

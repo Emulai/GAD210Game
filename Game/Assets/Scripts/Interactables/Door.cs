@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public struct DoorSwitch {
     public bool doorOverride;
-    public Switch aSwitch;
+    public Switch theSwitch;
     public int group;
 }
 
@@ -20,8 +20,8 @@ public class Door : MonoBehaviour
     private bool debug = false;
 
     private Animator anim = null;
-    private List<bool> firstTruths = new List<bool>();
-    private List<bool> secondTruths = new List<bool>();
+    public List<bool> firstTruths = new List<bool>();
+    public List<bool> secondTruths = new List<bool>();
     private bool overridden = false;
 
     void Start()
@@ -38,22 +38,35 @@ public class Door : MonoBehaviour
         foreach (DoorSwitch dS in switches) {
 
             if (!dS.doorOverride) {
-                firstTruths.Add(dS.aSwitch.IsActive);
+                if (dS.group == 1) {
+                    firstTruths.Add(dS.theSwitch.IsActive);
+                }
+                else {
+                    secondTruths.Add(dS.theSwitch.IsActive);
+                }
             }
-            else if (dS.aSwitch.IsActive) {
+            else if (dS.theSwitch.IsActive) {
                 overridden = true;
             }
 
             if (debug) {
-                Debug.DrawLine(transform.position, dS.aSwitch.gameObject.transform.position, Color.green);
+                Debug.DrawLine(transform.position, dS.theSwitch.gameObject.transform.position, Color.green);
             }
         }
 
-        if (!firstTruths.Contains(false) || overridden) {
+        if ((firstTruths.Count > 0 && !firstTruths.Contains(false)) || 
+            (secondTruths.Count > 0 && !secondTruths.Contains(false)) || 
+            overridden) 
+        {
             anim.SetBool("Open", true);
         }
         else {
             anim.SetBool("Open", false);
         }
+    }
+
+    public List<DoorSwitch> Switches {
+        get { return switches; }
+        set { switches = value; }
     }
 }

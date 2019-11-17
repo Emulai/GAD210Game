@@ -5233,17 +5233,47 @@ PrefabInstance:
         type: 3}
       propertyPath: switches.Array.data[0]
       value: 
-      objectReference: {fileID: 1593326029}
+      objectReference: {fileID: 0}
     - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
         type: 3}
       propertyPath: switches.Array.data[1]
       value: 
-      objectReference: {fileID: 2139494651}
+      objectReference: {fileID: 0}
     - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
         type: 3}
       propertyPath: debug
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: switches.Array.data[1].aSwitch
+      value: 
+      objectReference: {fileID: 1593326029}
+    - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: switches.Array.data[0].aSwitch
+      value: 
+      objectReference: {fileID: 2139494651}
+    - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: switches.Array.data[0].group
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: switches.Array.data[1].group
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: switches.Array.data[0].theSwitch
+      value: 
+      objectReference: {fileID: 2139494651}
+    - target: {fileID: 3115817531753366964, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: switches.Array.data[1].theSwitch
+      value: 
+      objectReference: {fileID: 1593326029}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7387998072b813b41a450c1a568482e6, type: 3}
 --- !u!1001 &3799930925972102539

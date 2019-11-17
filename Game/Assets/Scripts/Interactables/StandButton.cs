@@ -7,7 +7,7 @@ using TMPro;
 public class StandButton : Switch, IInteractive
 {
     [SerializeField]
-    float openTime = 0.0f;
+    private float openTime = 0.0f;
     [SerializeField]
     private GameObject timerScreen = null;
     [SerializeField]
@@ -68,5 +68,13 @@ public class StandButton : Switch, IInteractive
     public float Timer {
         get { return timer; }
         set { timer = value; }
+    }
+
+    public float OpenTime {
+        set { openTime = value; }
+    }
+
+    public GameObject TimerPanel {
+        set { timerScreen = value; }
     }
 }

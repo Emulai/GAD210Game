@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RoomGenerator : MonoBehaviour
 {
@@ -18,6 +21,18 @@ public class RoomGenerator : MonoBehaviour
     private int maxStackPerRoom = 3;
     [SerializeField]
     private TurretBehaviour turret = null;
+    [SerializeField]
+    private Switch standButton = null;
+    [SerializeField]
+    private GameObject standTimer = null;
+    [SerializeField]
+    private Switch boxButton = null;
+    [SerializeField]
+    private TriggerBox triggerBox = null;
+    [SerializeField]
+    private GameObject boxIndicator = null;
+    [SerializeField]
+    private LevelSwitcher levelEnd = null;
 
     private Stack<Vector3> roomsToDo = new Stack<Vector3>();
     private List<Vector3> placedRooms = new List<Vector3>();
@@ -25,9 +40,11 @@ public class RoomGenerator : MonoBehaviour
     private Stack<Vector3> reservedRooms = new Stack<Vector3>();
     private EnemySpawn[] enemySpawns = null;
     private ActivatorSpawn[] activatorSpawns = null;
+    private List<Door> currentDoors = new List<Door>();
     private int roomCount = 0;
     private int maxRooms = 5;
     private bool canSpawnEnemies = false;
+    private bool hasDoors = false;
 
     // Start is called before the first frame update
     void Start()
@@ -59,6 +76,7 @@ public class RoomGenerator : MonoBehaviour
         }
 
         roomCount++;
+        Vector3 lastRoom = new Vector3();
 
         // 7. Process [door] walls, return to 1
         canSpawnEnemies = true;
@@ -88,11 +106,17 @@ public class RoomGenerator : MonoBehaviour
             }
 
             roomCount++;
+            lastRoom = reservedPos;
         }
+
+        lastRoom.y += 10.0f;
+        LevelSwitcher ls = Instantiate(levelEnd, lastRoom, Quaternion.identity);
+        ls.TheEnd = true;
     }
 
     private void GenerateWalls(Transform roomTrans) {
         WallTypes[] walls = new WallTypes[4];
+        hasDoors = false;
 
         // 2. For each wall, determine if [open], [closed], [door]
         for (int index = 0; index < walls.Length; index++) {
@@ -103,6 +127,7 @@ public class RoomGenerator : MonoBehaviour
                 if (roomCount >= maxRooms) {
                     walls[index] = WallTypes.BLANK;
                 }
+                hasDoors = true;
             }
         }
 
@@ -262,8 +287,13 @@ public class RoomGenerator : MonoBehaviour
 
     private void InstantiateWall(WallTypes wallType, Vector3 position, Quaternion rotation) {
         if (!placedWalls.Contains(position)) {
-            Instantiate(roomWalls[(int)wallType], position, rotation);
+            GameObject wall = Instantiate(roomWalls[(int)wallType], position, rotation);
             placedWalls.Add(position);
+
+            if (wallType == WallTypes.DOOR) {
+                Door[] doors = wall.GetComponentsInChildren<Door>();
+                currentDoors.AddRange(doors.ToList());
+            }
         }
     }
 
@@ -283,7 +313,90 @@ public class RoomGenerator : MonoBehaviour
             }
         }
 
+        if (hasDoors) {
+            List<Switch> switches = new List<Switch>();
+            bool whichSwich = Random.value > 0.5f;
+
+            if (whichSwich) {
+                for (int index = 0; index < activatorSpawns.Length; index++) {
+                    // True = stand button, false = box button & box
+                    if (Random.value > 0.8f && !activatorSpawns[index].IsInUse) {
+                        Switch s = Instantiate(standButton, activatorSpawns[index].transform.position - new Vector3(0.0f, (activatorSpawns[index].transform.localScale.y / 2.0f), 0.0f), activatorSpawns[index].transform.rotation);
+                        activatorSpawns[index].IsInUse = true;
+
+                        Quaternion q = activatorSpawns[index].transform.rotation;
+                        q.y -= 180.0f;
+                        GameObject timer = Instantiate(standTimer, activatorSpawns[index].transform.position + new Vector3(0.0f, (activatorSpawns[index].transform.localScale.y / 2.0f), 0.0f), q);
+                        StandButton sb = s.GetComponent<StandButton>();
+                        sb.OpenTime = Random.Range(8.0f, 15.0f);
+                        sb.TimerPanel = timer;
+
+                        switches.Add(s);
+                    }
+                    else {
+                        if (switches.Count == 0 && index == activatorSpawns.Length - 1 && !activatorSpawns[index].IsInUse) {
+                            Switch s = Instantiate(standButton, activatorSpawns[index].transform.position - new Vector3(0.0f, (activatorSpawns[index].transform.localScale.y / 2.0f), 0.0f), activatorSpawns[index].transform.rotation);
+                            activatorSpawns[index].IsInUse = true;
+
+                            Quaternion q = activatorSpawns[index].transform.rotation;
+                            q.y -= 180.0f;
+                            GameObject timer = Instantiate(standTimer, activatorSpawns[index].transform.position + new Vector3(0.0f, (activatorSpawns[index].transform.localScale.y / 2.0f), 0.0f), q);
+                            StandButton sb = s.GetComponent<StandButton>();
+                            sb.OpenTime = Random.Range(8.0f, 15.0f);
+                            sb.TimerPanel = timer;
+
+                            switches.Add(s);
+                        }
+                        else {
+                            activatorSpawns[index].IsInUse = true;   
+                        }
+                    }
+                    Destroy(activatorSpawns[index].gameObject);
+                }
+            }
+            else {
+                if (!activatorSpawns[0].IsInUse) {
+                    Switch b = Instantiate(boxButton, activatorSpawns[0].transform.position - new Vector3(0.0f, (activatorSpawns[0].transform.localScale.y / 2.2f), 0.0f), activatorSpawns[0].transform.rotation);
+                    activatorSpawns[0].IsInUse = true;
+
+                    GameObject indicator = Instantiate(boxIndicator, activatorSpawns[0].transform.position + new Vector3(0.0f, (activatorSpawns[0].transform.localScale.y / 2.0f), 0.0f), activatorSpawns[0].transform.rotation);
+                    BoxButton bb = b.GetComponent<BoxButton>();
+                    bb.Indicator = indicator;
+
+                    switches.Add(b);
+                }
+
+                if (!activatorSpawns[1].IsInUse) {
+                    Instantiate(triggerBox, activatorSpawns[1].transform.position, activatorSpawns[1].transform.rotation);
+                    activatorSpawns[1].IsInUse = true;
+                }
+
+                for (int index = 0; index < activatorSpawns.Length; index++) {
+                    activatorSpawns[index].IsInUse = true;
+                    Destroy(activatorSpawns[index].gameObject);
+                }
+            }
+
+            foreach (Door door in currentDoors) {
+                int group = 1;
+                if (door.Switches.Count > 0) {
+                    group = 2;
+                }
+
+                foreach(Switch switcho in switches) {
+                    if (Vector3.Distance(door.transform.position, switcho.transform.position) <= 19.0f) {
+                        DoorSwitch doorSwitch;
+                        doorSwitch.doorOverride = false;
+                        doorSwitch.theSwitch = switcho;
+                        doorSwitch.group = group;
+                        door.Switches.Add(doorSwitch);
+                    }
+                }
+            }
+        }
+
         enemySpawns = new EnemySpawn[0];
         activatorSpawns = new ActivatorSpawn[0];
+        // currentDoors.Clear();
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ActivatorSpawn : MonoBehaviour
 {
+    private bool inUse = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +16,10 @@ public class ActivatorSpawn : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public bool IsInUse {
+        get { return inUse; }
+        set { inUse = value; }
     }
 }

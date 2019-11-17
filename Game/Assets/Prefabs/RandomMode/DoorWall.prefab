@@ -67,6 +67,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3631563919749561565, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3631563918196164316, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3631563918219761194, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3631563918486390915, guid: 7387998072b813b41a450c1a568482e6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7387998072b813b41a450c1a568482e6, type: 3}
 --- !u!1001 &4234731928668503288
@@ -80,6 +100,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DoorWall
+      objectReference: {fileID: 0}
+    - target: {fileID: 2287127516582599804, guid: 67500319bfbe959469f4def01248bf39,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ramp
       objectReference: {fileID: 0}
     - target: {fileID: 2287127516582599805, guid: 67500319bfbe959469f4def01248bf39,
         type: 3}
@@ -140,6 +165,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2287127517095531593, guid: 67500319bfbe959469f4def01248bf39,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 2287127517095531634, guid: 67500319bfbe959469f4def01248bf39,
         type: 3}

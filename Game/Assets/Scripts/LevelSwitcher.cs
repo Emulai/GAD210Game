@@ -7,23 +7,29 @@ public class LevelSwitcher : MonoBehaviour
 {
     [SerializeField]
     private string nextScene = "";
+    [SerializeField]
+    private bool end = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private GameManager manager = null;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void Start() {
+        manager = FindObjectOfType<GameManager>();
+        manager.IsRunning = true;
     }
 
     void OnTriggerEnter(Collider other) {
         if (other.tag == "Player") {
-            other.gameObject.GetComponent<PlayerInput>().IsControllable = false;
-            SceneManager.LoadSceneAsync(nextScene);
+            if (end) {
+                manager.GameEnd();
+            }
+            else {
+                other.gameObject.GetComponent<PlayerInput>().IsControllable = false;
+                SceneManager.LoadSceneAsync(nextScene);
+            }
         }
+    }
+
+    public bool TheEnd {
+        set { end = value; }
     }
 }

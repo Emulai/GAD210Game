@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7294109660666354409}
   m_Layer: 10
   m_Name: StandButton
-  m_TagString: Untagged
+  m_TagString: Switch
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -123,6 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aa33aae15b038443bb272f412ec1163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  openTime: 0
+  timerScreen: {fileID: 0}
+  doorOpen: {r: 0, g: 1, b: 0, a: 1}
+  doorClosed: {r: 1, g: 0, b: 0, a: 1}
 --- !u!65 &7294109660666354409
 BoxCollider:
   m_ObjectHideFlags: 0
