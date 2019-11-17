@@ -17,6 +17,7 @@ public class BoxButton : Switch
     private Image indicatorPanel = null;
 
     void Start() {
+        // Get all parts of the indicator panel
         Canvas c = indicator.GetComponentInChildren<Canvas>();
         indicatorText = c.GetComponentInChildren<TMP_Text>();
         indicatorPanel = c.GetComponentInChildren<Image>();
@@ -24,7 +25,7 @@ public class BoxButton : Switch
 
     void OnTriggerEnter(Collider other) {
         if (other.tag == "TriggerBox") {
-            
+            // Turn on indicator panel
             isActive = true;
             indicatorText.text = "O";
             indicatorPanel.color = doorOpen;
@@ -34,7 +35,7 @@ public class BoxButton : Switch
 
     void OnTriggerExit(Collider other) {
         if (other.tag == "TriggerBox") {
-            
+            // Turn off indicator panel
             isActive = false;
             indicatorText.text = "X";
             indicatorPanel.color = doorClosed;

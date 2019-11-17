@@ -21,13 +21,14 @@ public class StandButton : Switch, IInteractive
     private Coroutine coroutine = null;
 
     void Start() {
+        // Get all indicator parts
         Canvas c = timerScreen.GetComponentInChildren<Canvas>();
         timerText = c.GetComponentInChildren<TMP_Text>();
         timerPanel = c.GetComponentInChildren<Image>();
     }
 
-    // Handles countdown timer until door is closed 
     void Update() {
+        // If the button is active, count down till closed and change colour of panel
         if (isActive) {
             if (coroutine != null) {
                 StopCoroutine(coroutine);
@@ -48,16 +49,19 @@ public class StandButton : Switch, IInteractive
         }
     }
 
+    // Implementation of IInteractive
     public void Activate(PlayerController activator) {
         isActive = true;
         timer = openTime;
         timerPanel.color = doorOpen;
     }
 
+    // Implementation of IInteractive
     public string Info() {
         return "Press button";
     }
 
+    // Returns indicator to black after a second
     private IEnumerator ChangeColour() {
         yield return new WaitForSeconds(1.0f);
 
@@ -65,6 +69,7 @@ public class StandButton : Switch, IInteractive
         timerPanel.color = Color.black;
     }
 
+    // Used by SaveSystem
     public float Timer {
         get { return timer; }
         set { timer = value; }

@@ -12,6 +12,7 @@ public class TriggerBox : MonoBehaviour, IInteractive
     private Vector3 startPos;
 
     void Start() {
+        // Used to respawn box if falling out of world
         startPos = transform.position;
         body = GetComponent<Rigidbody>();
     }
@@ -30,6 +31,7 @@ public class TriggerBox : MonoBehaviour, IInteractive
         }
     }
 
+    // Implementation of IInteractive
     // Box activation simply allows the player to pick up and move the box
     public void Activate(PlayerController activator) {
         isActive = !isActive;
@@ -46,6 +48,7 @@ public class TriggerBox : MonoBehaviour, IInteractive
         }
     }
 
+    // Implementation of IInteractive
     // Return a different string depending on active status
     public string Info() {
         if (isActive) {
@@ -56,7 +59,12 @@ public class TriggerBox : MonoBehaviour, IInteractive
         }
     }
 
+    // Respawns box if it falls out of world
     public void Reset() {
         transform.position = startPos;
+    }
+
+    public bool IsActive {
+        get { return isActive; }
     }
 }

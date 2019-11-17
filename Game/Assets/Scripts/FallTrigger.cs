@@ -4,18 +4,7 @@ using UnityEngine;
 
 public class FallTrigger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    // Kill player or reset triggerbox position when contacted
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.tag == "Player") {
             // Kill Player

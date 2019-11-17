@@ -57,6 +57,7 @@ public class Platform : MonoBehaviour
 
         if (curved)
         {
+            // Move the platform towards the current path waypoint slerpily
             platform.transform.position = Vector3.Slerp(startPosition, path.transform.TransformPoint(pos[pathIndex]), t);
         }
         else
@@ -115,6 +116,7 @@ public class Platform : MonoBehaviour
         }
     }
 
+    // Used in SaveSystem
     public int TargetIndex {
         get { return pathIndex; }
         set { pathIndex = value; }

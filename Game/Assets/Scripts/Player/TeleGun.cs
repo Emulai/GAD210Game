@@ -14,12 +14,14 @@ public class TeleGun : MonoBehaviour
 
     void Start()
     {
+        // Move projectile to gun at start
         projectileStartScale = projectile.transform.localScale;
         ReturnProjectile();
     }
 
     public void Shoot()
     {
+        // If you have projectile, launch it
         if (hasProjectile) 
         {
             Rigidbody rb = projectile.gameObject.AddComponent<Rigidbody>();
@@ -30,17 +32,20 @@ public class TeleGun : MonoBehaviour
 
             hasProjectile = false;
         }
+        // Else call it back
         else
         {
             ReturnProjectile();    
         }
     }
 
+    // Returns true if has projectile & outs position of projectile, plus a smidge on Y
     public bool GetTeleportTarget(out Vector3 targetPosition)
     {
         targetPosition = projectile.position;
         targetPosition.y += 0.7f;
 
+        // Return projectile if not in gun
         if (!hasProjectile)
         {
             ReturnProjectile();
@@ -49,6 +54,7 @@ public class TeleGun : MonoBehaviour
         return false;
     }
 
+    // Move projectile to gun launch spot, parent it
     private void ReturnProjectile() 
     {
         Rigidbody rb = projectile.gameObject.GetComponent<Rigidbody>();
@@ -62,6 +68,7 @@ public class TeleGun : MonoBehaviour
         hasProjectile = true;
     }
 
+    // Update gun's rotation to match cam rotation
     void Update()
     {
         transform.rotation = Camera.main.transform.rotation;

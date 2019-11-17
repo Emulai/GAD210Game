@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Struct used to handle switch information
 [System.Serializable]
 public struct DoorSwitch {
     public bool doorOverride;
@@ -12,7 +13,6 @@ public struct DoorSwitch {
 public class Door : MonoBehaviour
 {
     [SerializeField]
-    // private List<Switch> switches = new List<Switch>();
     private List<DoorSwitch> switches = new List<DoorSwitch>();
 
     [Header("Debug")]
@@ -31,13 +31,17 @@ public class Door : MonoBehaviour
 
     void Update()
     {
+        // Clear last loop's truths
         firstTruths.Clear();
         secondTruths.Clear();
         overridden = false;
 
+        // Loop through each switch attached to this door
         foreach (DoorSwitch dS in switches) {
 
+            // If it isn't an override switch
             if (!dS.doorOverride) {
+                // Check its group then add to appropriate truth list
                 if (dS.group == 1) {
                     firstTruths.Add(dS.theSwitch.IsActive);
                 }
@@ -45,15 +49,18 @@ public class Door : MonoBehaviour
                     secondTruths.Add(dS.theSwitch.IsActive);
                 }
             }
+            // Else mark as overridden
             else if (dS.theSwitch.IsActive) {
                 overridden = true;
             }
 
+            // Show attached switches 
             if (debug) {
                 Debug.DrawLine(transform.position, dS.theSwitch.gameObject.transform.position, Color.green);
             }
         }
 
+        // If first or second truths aren't empty, and don't contain false, or door is overridden, open door. Otherwise keep it closed!
         if ((firstTruths.Count > 0 && !firstTruths.Contains(false)) || 
             (secondTruths.Count > 0 && !secondTruths.Contains(false)) || 
             overridden) 

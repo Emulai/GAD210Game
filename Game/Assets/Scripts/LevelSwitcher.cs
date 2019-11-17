@@ -19,9 +19,11 @@ public class LevelSwitcher : MonoBehaviour
 
     void OnTriggerEnter(Collider other) {
         if (other.tag == "Player") {
+            // If an end-game level switcher, victory!
             if (end) {
                 manager.GameEnd();
             }
+            // Else load a new scene
             else {
                 other.gameObject.GetComponent<PlayerInput>().IsControllable = false;
                 SceneManager.LoadSceneAsync(nextScene);

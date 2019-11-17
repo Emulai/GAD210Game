@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Switch : MonoBehaviour
 {
+    // Used to provide common switch interface
     protected bool isActive = false;
 
     public bool IsActive {

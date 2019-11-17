@@ -16,20 +16,29 @@ public class InstructionMenu : MonoBehaviour
 
     private int index = 0;
 
-    void Start() {
+    void OnEnable() {
+        // Setup first info and image
         instItems[index].gameObject.SetActive(true);
+        instImage.texture = instImages[index];
     }
 
     public void Next() {
+        // If within bounds, increment index and setup corresponding info and image
         if (index < instItems.Count - 1) {
             index++;
 
             instItems[index - 1].gameObject.SetActive(false);
             instItems[index].gameObject.SetActive(true);
+
+            instImage.texture = instImages[index];
         }
+        // Else turn off instruction screen
         else {
             gameObject.SetActive(false);
             mainMenu.gameObject.SetActive(true);
+            instItems[index].gameObject.SetActive(false);
+
+            index = 0;
         }
     }
 }

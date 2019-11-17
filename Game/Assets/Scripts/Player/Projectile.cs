@@ -8,6 +8,10 @@ public class Projectile : MonoBehaviour
     private LayerMask mask = (1 << 8);
     private Vector3 originalScale;
 
+    ////////////////
+    // Outdated code, attempts to stop projectile deformation. Please give me a shout if you know what is wrong
+    ////////////////
+
     void Start() {
         originalScale = transform.lossyScale;
     }

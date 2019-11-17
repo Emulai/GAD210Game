@@ -23,7 +23,7 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
     [SerializeField]
     private float bulletForce = 1.0f;
     [SerializeField]
-    private LayerMask playerMask = (1 << 11);
+    private LayerMask playerMask = (1 << 11) | (1 << 12);
 
     [Header("Debug")]
     [SerializeField]
@@ -42,10 +42,13 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
 
     void Update() {
 
+        // If turret has not been turned off
         if (isActive) {
+            // Determine angle to player
             Vector3 direction = player.transform.position - transform.position;
             float angle = Vector3.Angle(direction, transform.forward);
 
+            // If angle to player is within viewAngle, turn to look at player
             if (angle < viewAngle && 
                 Vector3.Distance(player.transform.position, transform.position) < viewDistance) 
             {
@@ -53,7 +56,9 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
                 seenPlayer = true;
             }
 
+            // If turret has seen player
             if (seenPlayer) {
+                // Fire a raycast to determine if hitting player. Only concerned with raycasting player and walls
                 RaycastHit hit;
                 Physics.Raycast(eye.transform.position, eye.transform.forward, out hit, viewDistance, playerMask);
                 if (debug) {
@@ -61,12 +66,19 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
                 }
 
                 if (hit.collider != null) {
-                    shootTimer -= Time.deltaTime;
-                    if (shootTimer <= 0.0f) {
-                        // Attack player
-                        Attack();
+                    // If hit something, check if it is the player
+                    if (hit.collider.tag == "Player") {
+                        shootTimer -= Time.deltaTime;
+                        if (shootTimer <= 0.0f) {
+                            // Attack player
+                            Attack();
 
-                        shootTimer = shootDelay;
+                            shootTimer = shootDelay;
+                        }
+                    }
+                    else {
+                        seenPlayer = false;
+                        shootTimer = shootDelay;    
                     }
                 }
                 else {
@@ -75,6 +87,7 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
                 }
             }
         }
+        // If recently turned off, slowly angle down
         else if (inactiveTimer < 1.5f) {
             inactiveTimer += Time.deltaTime;
 
@@ -85,6 +98,7 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
         
     }
 
+    // Spawn bullets alternately from left and right guns
     private void Attack() {
 
         Vector3 gunPosition = gunChoice ? bulletSpawnLeft.position : bulletSpawnRight.position;
@@ -96,17 +110,20 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
             null
         );
 
+        // Give it a little force, but not much. It looks good when it is slow
         b.GetComponent<Rigidbody>().AddForce(((player.transform.position - gunPosition) * bulletForce));
 
         gunChoice = !gunChoice;
     }
 
+    // Implementation of IInteractive
     public void Activate(PlayerController activator) {
         if (!seenPlayer && isActive) {
             isActive = false;
         }
     }
 
+    // Implementation of IInteractive
     public string Info() {
         if (seenPlayer || !isActive) {
             return "";
@@ -116,6 +133,7 @@ public class TurretBehaviour : MonoBehaviour, IInteractive
         }
     }
 
+    // Used by SaveSystem
     public bool IsActive {
         get { return isActive; }
         set { isActive = value; }

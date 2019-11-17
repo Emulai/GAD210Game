@@ -16,6 +16,8 @@ public class PlayerInput : MonoBehaviour
 
     void Start() {
         player = GetComponent<PlayerController>();
+
+        // If player doesn't have gun, turn it off
         if (!hasGun) {
             gun.gameObject.SetActive(false);
         }
@@ -25,6 +27,7 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Disable/enable input loop
         if (!manager.IsPaused && controllable) {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
@@ -35,27 +38,34 @@ public class PlayerInput : MonoBehaviour
 
             player.VerticalValue = vertical;
 
+            // Jump
             if (Input.GetButtonDown("Jump"))
             {
                 player.Jump();
             }
 
+            // Rotate on X
             if (mouseX != 0.0f)
             {
                 player.RotateY = mouseX;
             }
 
+            // Rotate on Y
             if (mouseY != 0.0f)
             {
                 player.RotateX = mouseY;
             }
 
+            // If player has gun. allow use of gun
             if (hasGun) {
+
+                // Shoot projectile
                 if (Input.GetButtonDown("Fire1"))
                 {
                     gun.Shoot();
                 }
 
+                // Teleport to projectile
                 if (Input.GetButtonDown("Fire2"))
                 {
                     Vector3 targetPosition = new Vector3();
@@ -66,12 +76,14 @@ public class PlayerInput : MonoBehaviour
                 }
             }
 
+            // Activate IInteractive objects
             if (Input.GetButtonDown("Activate")) {
                 player.Activate();
             }
         }
     }
 
+    // Give player gun and make it visible
     public void GetGun() {
         hasGun = true;
         gun.gameObject.SetActive(true);
@@ -81,6 +93,7 @@ public class PlayerInput : MonoBehaviour
         set { controllable = value; }
     }
 
+    // Used by SaveSystem
     public bool HasGun {
         get { return hasGun; }
         set { hasGun = value; }

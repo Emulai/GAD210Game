@@ -66,27 +66,33 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // If can see an IInteractive object, display UI
         if (isViewingAction) {
             actionIcon.gameObject.SetActive(true);
             actionText.gameObject.SetActive(true);
         }
+        // Else do not display UI
         else {
             actionIcon.gameObject.SetActive(false);
             actionText.text = "";
             actionText.gameObject.SetActive(false);
         }
 
+        // Death condition
         if (currentHealth <= 0.0f) {
             manager.GameOver();
         }
 
+        // Controls "health bar" red-screen indicator & healing
         if (currentHealth < 100.0f) {
 
+            // If not damaged for a second, heal!
             if (timeSinceLastHit >= 1.0f) {
                 currentHealth++;
                 timeSinceLastHit = 1.0f;
             }
 
+            // Determine percentage of health lost, convert to alpha on red screen-size UI panel
             float lostHealth = maxHealth - currentHealth;
             healthColour.a = (lostHealth / maxHealth);
             healthImage.color = healthColour;
@@ -129,6 +135,7 @@ public class PlayerController : MonoBehaviour
                 {
                     onRamp = true;
                 }
+                // Out-dated (though functional) platforn code. Comment "in" in Sandbox mode
                 else if (groundHit.collider.tag == "Platform")
                 {
                     // transform.SetParent(hit.collider.transform);
@@ -146,9 +153,11 @@ public class PlayerController : MonoBehaviour
             onRamp = false;
         }
 
+        // Calc forward and right vectors
         Vector3 fForward = transform.forward * verticalAxisValue;
         Vector3 fRight = transform.right * horizontalAxisValue;
 
+        // Compensate for loss of speed on ramps -- ramps only in Sandbox mode
         if (onRamp && (verticalAxisValue != 0.0f || horizontalAxisValue != 0.0f)) 
         {
             Vector3 rampFactor = new Vector3(0, 2, 0);
@@ -156,15 +165,18 @@ public class PlayerController : MonoBehaviour
             fRight += rampFactor;
         }
 
+        // Calculate final directional vector, and visualise it when debugging
         fDirectional += fForward + fRight;
         if (displayMoveVector) 
         {
             Debug.DrawRay(transform.position, fDirectional, Color.blue);
         }
 
+        // Apply to velocity after grabbing current y
         fDirectional.y = rb.velocity.y;
         rb.velocity = fDirectional;
 
+        // Rotate player and camera
         transform.rotation = Quaternion.Euler(0, yRotate, 0);
         Camera.main.transform.rotation = Quaternion.Euler(xRotate, yRotate, 0);
 
@@ -227,10 +239,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Move player to target position
     public void Teleport(Vector3 targetPosition) {
         transform.position = targetPosition;
     }
 
+    // ...jump
     public void Jump() 
     {
         if (isGrounded) 
@@ -240,23 +254,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Handle damage to player health
     public void DamageHealth(float damage) {
+        // Absolute value -- this function doesn't allow for healing damage
         Mathf.Abs(damage);
 
         currentHealth -= damage;
         timeSinceLastHit = 0.0f;
     }
 
+    // Used by PlayerInput
     public float HorizontalValue 
     {
         set { horizontalAxisValue = value * speed; }
     }
 
+    // Used by PlayerInput
     public float VerticalValue 
     {
         set { verticalAxisValue = value * speed; }
     }
 
+    // Used by PlayerInput
     public float RotateX 
     {
         set 
@@ -267,6 +286,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Used by PlayerInput
     public float RotateY 
     {
         set { yRotate += value * 5.0f; }
@@ -276,6 +296,7 @@ public class PlayerController : MonoBehaviour
         set { visibleObject = value; }
     }
 
+    // Used by SaveSystem
     public float CurrentHealth {
         get { return currentHealth; }
         set { currentHealth = value; }

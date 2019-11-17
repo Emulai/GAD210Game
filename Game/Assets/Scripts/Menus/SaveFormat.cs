@@ -33,6 +33,7 @@ public class SaveFormat
     public List<Vector3> bulletPositions = new List<Vector3>();
     public List<Vector3> bulletVelocities = new List<Vector3>();
 
+    // Save scene data
     public SaveFormat(
         PlayerInput input,
         TriggerBox[] boxes,
@@ -41,23 +42,28 @@ public class SaveFormat
         TurretBehaviour[] turrets,
         EnemyBullet[] bullets)
     {
+        // Scene name
         sceneName = SceneManager.GetActiveScene().name;
 
+        // Player info
         playerHasGun = input.HasGun;
         playerPosition = input.gameObject.transform.position;
         playerRotation = input.gameObject.transform.rotation;
         playerHealth = input.gameObject.GetComponent<PlayerController>().CurrentHealth;
 
+        // Details of all TriggerBoxes in scene
         foreach(TriggerBox box in boxes) {
             boxPositions.Add(box.transform.position);
             boxRotations.Add(box.transform.rotation);
         }
 
+        // Details of all StandButtons in scene
         foreach (StandButton standButton in standButtons) {
             standTimers.Add(standButton.Timer);
             standActives.Add(standButton.IsActive);
         }
 
+        // Details of all running platforms in scene (buggy -- test Sandbox)
         platformPositions = new Vector3[platforms.Length];
         platformChildPositions = new Vector3[platforms.Length];
         platformTarget = new int[platforms.Length];
@@ -67,12 +73,14 @@ public class SaveFormat
             platformTarget[index] = platforms[index].TargetIndex;
         }
 
+        // Details of all Turrets in scene
         foreach (TurretBehaviour turret in turrets) {
             turretActives.Add(turret.IsActive);
             turretPositions.Add(turret.transform.position);
             turretRotations.Add(turret.transform.rotation);
         }
 
+        // Details of all bullets in scene
         foreach (EnemyBullet bullet in bullets) {
             bulletTTL.Add(bullet.TimeToLive);
             bulletPositions.Add(bullet.transform.position);

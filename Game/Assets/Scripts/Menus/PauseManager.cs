@@ -20,7 +20,9 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
+        // If player hits 'Escape'
         if (Input.GetButtonDown("Pause")) {
+            // Pause if unpaused & show menu
             if (!isPaused) {
                 Time.timeScale = 0.0f;
                 pauseMenu.gameObject.SetActive(true);
@@ -30,6 +32,7 @@ public class PauseManager : MonoBehaviour
 
                 isPaused = true;
             }
+            // Unpause if paused & hide menu
             else {
                 Time.timeScale = 1.0f;
                 pauseMenu.gameObject.SetActive(false);

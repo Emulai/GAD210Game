@@ -11,13 +11,11 @@ public class EnemyBullet : MonoBehaviour
 
     private float ttl = 0.0f;
 
-    // Start is called before the first frame update
     void Start()
     {
         ttl = timeToLive;
     }
 
-    // Update is called once per frame
     void Update()
     {
         ttl -= Time.deltaTime;
@@ -29,11 +27,13 @@ public class EnemyBullet : MonoBehaviour
 
     void OnCollisionEnter(Collision col) {
         if (col.collider.tag == "Player") {
+            // If bullet hits player, damage player
             col.gameObject.GetComponent<PlayerController>().DamageHealth(damage);
             Destroy(this.gameObject);
         }
     }
 
+    // Used by SaveSystem
     public float TimeToLive {
         get { return ttl; }
         set { ttl = value; }
