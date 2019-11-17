@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
-    public string tester;
+    [SerializeField]
+    private EnemyBullet bullet = null;
     private static GameManager instance;   
     private SaveFormat fileToLoad;
     private Coroutine co;
+    private bool gameRunning = true;
 
     void Awake() {
         if (instance == null) {
@@ -24,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadGameLevel(SaveFormat file) {
         fileToLoad = file;
+        gameRunning = true;
 
         StartCoroutine(LoadGameLevelCoroutine());
     }
@@ -36,9 +40,11 @@ public class GameManager : MonoBehaviour
         }
 
         PlayerInput input = FindObjectOfType<PlayerInput>();
+        PlayerController con = input.GetComponent<PlayerController>();
         input.HasGun = fileToLoad.playerHasGun;
         input.gameObject.GetComponent<Rigidbody>().MovePosition(fileToLoad.playerPosition);
-        input.transform.rotation = fileToLoad.playerRotation;
+        con.RotateX = fileToLoad.playerRotation.x;
+        con.RotateY = fileToLoad.playerRotation.y;
 
         TriggerBox[] boxes = FindObjectsOfType<TriggerBox>();
         for (int index = 0; index < fileToLoad.boxPositions.Count; index++) {
@@ -52,14 +58,48 @@ public class GameManager : MonoBehaviour
             standButtons[index].IsActive = fileToLoad.standActives[index];
         }
 
-        Platform[] platforms = FindObjectsOfType<Platform>();
-        for (int index = 0; index < fileToLoad.platformPositions.Count; index++) {
+        Platform[] platforms = FindObjectsOfType<Platform>().OrderBy(p => p.transform.parent.position.x).ToArray();
+        for (int index = 0; index < fileToLoad.platformPositions.Length; index++) {
             platforms[index].transform.position = fileToLoad.platformPositions[index];
+            platforms[index].gameObject.GetComponentInChildren<BoxCollider>().transform.position = fileToLoad.platformChildPositions[index];
             platforms[index].pathIndex = fileToLoad.platformTarget[index];
+        }
+
+        TurretBehaviour[] turrets = FindObjectsOfType<TurretBehaviour>();
+        for (int index = 0; index < fileToLoad.turretRotations.Count; index++) {
+            turrets[index].IsActive = fileToLoad.turretActives[index];
+            turrets[index].transform.position = fileToLoad.turretPositions[index];
+            turrets[index].transform.rotation = fileToLoad.turretRotations[index];
+        }
+
+        EnemyBullet[] bullets = FindObjectsOfType<EnemyBullet>();
+        foreach (EnemyBullet bullet in bullets) {
+            Destroy(bullet);
+        }
+
+        for (int index = 0; index < fileToLoad.bulletPositions.Count; index++) {
+            EnemyBullet b = Instantiate(bullet, fileToLoad.bulletPositions[index], Quaternion.identity);
+            b.gameObject.GetComponent<Rigidbody>().velocity = fileToLoad.bulletVelocities[index];
+            b.TimeToLive = fileToLoad.bulletTTL[index];
+        }
+    }
+
+    public void GameOver() {
+        if (gameRunning) {
+            gameRunning = false;
+            Time.timeScale = 0.0f;
+            Object[] oarr = Resources.FindObjectsOfTypeAll(typeof(PauseMenu));
+            PauseMenu pm = (PauseMenu)oarr[0];
+            pm.gameObject.SetActive(true);
+            pm.GameOverMenu();
         }
     }
 
     public static GameManager Instance {
         get { return instance; }
+    }
+
+    public bool IsRunning {
+        set { gameRunning = value; }
     }
 }

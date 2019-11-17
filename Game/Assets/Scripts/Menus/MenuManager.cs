@@ -12,6 +12,13 @@ public class MenuManager : MonoBehaviour
     [SerializeField]
     private Canvas loadMenu = null;
 
+    private GameManager manager = null;
+
+    void Start() {
+        manager = FindObjectOfType<GameManager>();
+        manager.IsRunning = true;
+    }
+
     public void NewGame() {
         SceneManager.LoadSceneAsync("Scenes/FirstLevel");
     }

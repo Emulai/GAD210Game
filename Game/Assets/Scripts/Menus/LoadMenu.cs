@@ -8,8 +8,6 @@ using UnityEngine.UI;
 public class LoadMenu : MonoBehaviour
 {
     [SerializeField]
-    private GameManager manager = null;
-    [SerializeField]
     private Canvas mainMenu = null;
     [SerializeField]
     private ScrollRect loadList = null;
@@ -23,11 +21,15 @@ public class LoadMenu : MonoBehaviour
     private DirectoryInfo info = null;
     private string file = "";
     private SaveFormat fileToLoad = null;
+    private GameManager manager = null;
 
     // Start is called before the first frame update
     void Start()
     {
         info = new DirectoryInfo(Application.persistentDataPath + "/SavedGames");
+
+        manager = FindObjectOfType<GameManager>();
+        manager.IsRunning = true;
 
         LoadFiles();
     }

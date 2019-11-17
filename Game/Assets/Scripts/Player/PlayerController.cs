@@ -13,6 +13,10 @@ public class PlayerController : MonoBehaviour
     private float jumpForce = 250.0f;
     [SerializeField]
     private LayerMask groundMask = (1 << 8) | (1 << 9);
+    [SerializeField]
+    private float maxHealth = 100.0f;
+    [SerializeField]
+    private GameObject healthVisualiser = null;
 
     [Header("World Interaction")]
     [SerializeField]
@@ -39,12 +43,20 @@ public class PlayerController : MonoBehaviour
     private bool onRamp = false;
     private bool isViewingAction = false;
     private IInteractive visibleObject = null;
+    private float currentHealth = 100.0f;
+    private Image healthImage = null;
+    private Color healthColour = Color.red;
+    private float timeSinceLastHit = 0.0f;
+    private GameManager manager = null;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         actionText.text = "";
+        healthImage = healthVisualiser.GetComponent<Image>();
+        healthColour = healthImage.color;
+        manager = FindObjectOfType<GameManager>();
 
         // Move to game controller
         Cursor.visible = false;
@@ -63,6 +75,28 @@ public class PlayerController : MonoBehaviour
             actionText.text = "";
             actionText.gameObject.SetActive(false);
         }
+
+        if (currentHealth <= 0.0f) {
+            manager.GameOver();
+        }
+
+        if (currentHealth < 100.0f) {
+
+            if (timeSinceLastHit >= 1.0f) {
+                currentHealth++;
+                timeSinceLastHit = 1.0f;
+            }
+
+            float lostHealth = maxHealth - currentHealth;
+            healthColour.a = (lostHealth / maxHealth);
+            healthImage.color = healthColour;
+        }
+        else {
+            healthColour.a = 0.0f;
+            healthImage.color = healthColour;
+        }
+
+        timeSinceLastHit += Time.deltaTime;
     }
 
     void FixedUpdate() 
@@ -166,13 +200,18 @@ public class PlayerController : MonoBehaviour
 
         // If an interactive object is found: make UI visible, grab object's interactive script, set UI text
         if (actionHit.collider != null) {
-            isViewingAction = true;
-
             if (visibleObject == null) {
                 visibleObject = actionHit.collider.gameObject.GetComponent<IInteractive>();
             }
 
-            actionText.text = visibleObject.Info();
+            if (!string.IsNullOrEmpty(visibleObject.Info())) {
+                isViewingAction = true;
+
+                actionText.text = visibleObject.Info();
+            }
+            else {
+                isViewingAction = false;
+            }
         }
         // Else make UI invisible and set object's interactive script to null
         else {
@@ -199,6 +238,13 @@ public class PlayerController : MonoBehaviour
             rb.drag = 0.0f;
             rb.AddForce(transform.up * jumpForce);
         }
+    }
+
+    public void DamageHealth(float damage) {
+        Mathf.Abs(damage);
+
+        currentHealth -= damage;
+        timeSinceLastHit = 0.0f;
     }
 
     public float HorizontalValue 
@@ -228,5 +274,10 @@ public class PlayerController : MonoBehaviour
 
     public IInteractive VisibleObject {
         set { visibleObject = value; }
+    }
+
+    public float CurrentHealth {
+        get { return currentHealth; }
+        set { currentHealth = value; }
     }
 }

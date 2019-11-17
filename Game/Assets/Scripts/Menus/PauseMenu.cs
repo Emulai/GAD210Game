@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -16,6 +17,13 @@ public class PauseMenu : MonoBehaviour
     private TMP_InputField saveName = null;
     [SerializeField]
     private Canvas loadMenu = null;
+
+    [SerializeField]
+    private TMP_Text gameOverText = null;
+    [SerializeField]
+    private Button resume = null;
+    [SerializeField]
+    private Button save = null;
 
     public void Resume() {
         Time.timeScale = 1.0f;
@@ -37,13 +45,17 @@ public class PauseMenu : MonoBehaviour
             PlayerInput input = FindObjectOfType<PlayerInput>();
             TriggerBox[] boxes = FindObjectsOfType<TriggerBox>();
             StandButton[] standButtons = FindObjectsOfType<StandButton>();
-            Platform[] platforms = FindObjectsOfType<Platform>();
+            Platform[] platforms = FindObjectsOfType<Platform>().OrderBy(p => p.transform.parent.position.x).ToArray();
+            TurretBehaviour[] turrets = FindObjectsOfType<TurretBehaviour>();
+            EnemyBullet[] bullets = FindObjectsOfType<EnemyBullet>();
 
             SaveFormat save = new SaveFormat(
                 input,
                 boxes,
                 standButtons,
-                platforms
+                platforms,
+                turrets,
+                bullets
             );
 
             string saveJson = JsonUtility.ToJson(save, true);
@@ -67,5 +79,14 @@ public class PauseMenu : MonoBehaviour
 
     public void MainMenu() {
         SceneManager.LoadSceneAsync("Scenes/MainMenu");
+    }
+
+    public void GameOverMenu() {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        gameOverText.gameObject.SetActive(true);
+        resume.gameObject.SetActive(false);
+        save.gameObject.SetActive(false);
     }
 }
